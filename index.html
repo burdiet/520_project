@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>給寶貝林巧庭 💜</title>
+<style>
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    min-height:100vh;
+    background: linear-gradient(135deg,#ffd6e0 0%,#ff8fab 35%,#ff4d6d 100%);
+    display:flex; align-items:center; justify-content:center;
+    padding: 20px;
+    cursor: pointer;
+  }
+  
+  /* 背景光暈與動畫 */
+  .bg-glow{ position:absolute; width:700px; height:700px; border-radius:50%; background:rgba(255,255,255,0.15); filter:blur(80px); animation:moveGlow 12s ease-in-out infinite alternate; z-index:0; }
+  .bg-glow2{ position:absolute; width:500px; height:500px; border-radius:50%; background:rgba(255,255,255,0.12); filter:blur(90px); right:-120px; bottom:-120px; animation:moveGlow2 10s ease-in-out infinite alternate; z-index:0; }
+  @keyframes moveGlow{ from{ transform:translate(-80px,-60px); } to{ transform:translate(100px,80px); } }
+  @keyframes moveGlow2{ from{ transform:translate(0px,0px); } to{ transform:translate(-120px,-80px); } }
+
+  .card{
+    position:relative; width:90%; max-width:760px; padding:56px 48px; border-radius:34px;
+    background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.28);
+    backdrop-filter: blur(22px); box-shadow: 0 25px 80px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.35);
+    text-align:center; color:white; z-index:1;
+  }
+
+  .typing{ font-size:26px; line-height:1.9; min-height:140px; font-weight:600; }
+  .cursor{ display:inline-block; width:3px; height:28px; background:white; margin-left:6px; animation:blink .8s infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .counter{ margin-top:34px; padding:28px; border-radius:26px; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.18); }
+  .days{ font-size:70px; font-weight:900; }
+
+  .btn{ display:inline-block; margin: 10px; padding:16px 30px; border-radius:999px; text-decoration:none; font-weight:800; transition:all .35s ease; cursor:pointer; border:none; }
+  .btn-love{ background:white; color:#ff4d6d; }
+  .btn-task{ background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.35); color:white; }
+  .btn:hover{ transform:translateY(-4px) scale(1.05); }
+
+  /* 點擊特效動畫 */
+  .click-heart { position: absolute; pointer-events: none; font-size: 20px; animation: floatOut 1s forwards; }
+  @keyframes floatOut { to { transform: translateY(-80px) scale(1.5); opacity: 0; } }
+
+  .popup{ 
+    position:fixed; 
+    inset:0; 
+    background:rgba(0,0,0,0.45); 
+    display:none; 
+    /* 這裡改用 flex，配合下方的 auto margin 實現完美置中 */
+    justify-content:center; 
+    align-items:center; 
+    z-index:999;
+    padding: 20px; /* 確保在小螢幕時，彈窗與邊緣有縫隙 */
+    overflow-y: auto; /* 若內容過長時允許滾動 */
+  }
+
+  .popup-box{ 
+    width: 100%; /* 手機上撐開寬度 */
+    max-width:420px; 
+    background:white; 
+    color:#333; 
+    padding:36px; 
+    border-radius:28px; 
+    text-align:center;
+    margin: auto; /* 確保內容在容器中自動置中 */
+    box-sizing: border-box;
+  }
+  .close-btn{ margin-top:24px; padding:12px 24px; border-radius:999px; background:#ff4d6d; color:white; cursor:pointer; display:inline-block; }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="bg-glow2"></div>
+
+<div class="card">
+  <div style="letter-spacing:4px; margin-bottom:18px;">HAPPY 520</div>
+  <h1 style="font-size:54px; margin-bottom:10px;">寶貝❤</h1>
+  <div class="name" style="margin-bottom:30px;">給最重要的妳 林巧庭</div>
+  <div class="typing"><span id="typingText"></span><span class="cursor"></span></div>
+
+  <div class="counter">
+    <div style="font-size:18px; margin-bottom:12px;">我們已經在一起</div>
+    <div class="days" id="daysCounter">0<span>天</span></div>
+  </div>
+
+  <div style="margin-top:20px; font-size:18px; font-weight:bold; opacity:0.9;">From 碩🦆</div>
+
+  <div class="buttons" style="margin-top:30px;">
+    <button class="btn btn-love" onclick="showLove()">領取今日碩🦆抱抱券 💕</button>
+    <button class="btn btn-task" onclick="openPopup()">碩🦆的秘密程式開發進度</button>
+  </div>
+  <div style="margin-top:34px; opacity:0.7; font-size:14px;">從 2022/06/03 開始 💜</div>
+</div>
+
+<div class="popup" id="popup">
+  <div class="popup-box" id="popupContent"></div>
+</div>
+
+<script>
+  // 1. 計算天數
+  const startDate = new Date('2022-06-03');
+  const days = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
+  document.getElementById('daysCounter').innerHTML = days + '<span>天</span>';
+
+  // 2. 打字機效果 (速度放慢至 100ms)
+  const text = "從 2022 年 6 月 3 日開始，\n妳就變成了我每天都待在一起的人，謝謝妳一直陪在平凡的我的身邊。\n\n我們有開心、難過、快樂、吵架、還有你不懂的小幽默，都讓這段日子變得不一樣。寶貝，520 快樂💜";
+  let index = 0;
+  function typeText(){
+    if(index < text.length){
+      document.getElementById("typingText").innerHTML += (text.charAt(index) === '\n' ? "<br>" : text.charAt(index));
+      index++;
+      setTimeout(typeText, 100);
+    }
+  }
+  typeText();
+
+  // 3. 點擊愛心特效
+  document.body.addEventListener('click', function(e) {
+    const heart = document.createElement('div');
+    heart.className = 'click-heart';
+    heart.innerHTML = '💜';
+    heart.style.left = e.clientX + 'px';
+    heart.style.top = e.clientY + 'px';
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 1000);
+  });
+
+  // 4. 彈窗
+  function showLove(){
+    const content = `<h2>抱抱券已啟用 💕</h2><p>現在立刻給你一個大大的擁抱！<br>永遠愛妳！</p><div class="close-btn" onclick="closePopup()">收到了！</div>`;
+    document.getElementById('popupContent').innerHTML = content;
+    document.getElementById('popup').style.display = 'flex';
+  }
+
+  function openPopup(){
+    const content = `<h2>即將上線 ✨</h2><p>碩的秘密程式開發進度<br>寶貝任務派遣平台正在努力開發中 💜<br><br>敬請期待測試版本上線！</p><div class="close-btn" onclick="closePopup()">我知道了 💕</div>`;
+    document.getElementById('popupContent').innerHTML = content;
+    document.getElementById('popup').style.display = 'flex';
+  }
+
+  function closePopup(){ document.getElementById('popup').style.display = 'none'; }
+</script>
+</body>
+</html>
