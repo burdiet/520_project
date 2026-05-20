@@ -131,12 +131,14 @@
 
   // 4. 彈窗
   function showLove(){
+    triggerHeartEffect(window.innerWidth/2, window.innerHeight/2); // 呼叫噴發特效
     const content = `<h2>抱抱券已啟用 💕</h2><p>現在立刻給你一個大大的擁抱！<br>永遠愛妳！</p><div class="close-btn" onclick="closePopup()">收到了！</div>`;
     document.getElementById('popupContent').innerHTML = content;
     document.getElementById('popup').style.display = 'flex';
   }
 
   function openPopup(){
+    triggerHeartEffect(window.innerWidth/2, window.innerHeight/2); // 呼叫噴發特效
     const content = `<h2>即將上線 ✨</h2><p>碩的秘密程式開發進度<br>寶貝任務派遣平台正在努力開發中 💜<br><br>敬請期待測試版本上線！</p><div class="close-btn" onclick="closePopup()">我知道了 💕</div>`;
     document.getElementById('popupContent').innerHTML = content;
     document.getElementById('popup').style.display = 'flex';
