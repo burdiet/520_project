@@ -46,6 +46,16 @@
 
   .counter{ margin-top:34px; padding:28px; border-radius:26px; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.18); }
   .days{ font-size:clamp(48px,14vw,70px); font-weight:900; }
+  /* 詳細模式:天時分秒,字級縮小並換成單位小字 */
+  .days.detail{ font-size:clamp(26px,8vw,40px); display:flex; justify-content:center; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .days.detail span{ font-size:0.42em; font-weight:700; opacity:0.85; margin-left:2px; }
+  /* 切換鈕 */
+  .toggle-btn{
+    margin-top:16px; padding:7px 16px; border-radius:999px; cursor:pointer;
+    background:rgba(255,255,255,0.22); border:1px solid rgba(255,255,255,0.4);
+    color:white; font-size:13px; font-weight:700; transition:all .25s ease;
+  }
+  .toggle-btn:hover{ background:rgba(255,255,255,0.35); transform:translateY(-1px); }
 
   .btn{ display:inline-block; margin: 10px; padding:16px 30px; border-radius:999px; text-decoration:none; font-weight:800; transition:all .35s ease; cursor:pointer; border:none; }
   .btn-love{ background:white; color:#ff4d6d; }
@@ -56,35 +66,55 @@
   .click-heart { position: absolute; pointer-events: none; font-size: 20px; animation: floatOut 1s forwards; }
   @keyframes floatOut { to { transform: translateY(-80px) scale(1.5); opacity: 0; } }
 
-  .popup{ 
-    position:fixed; 
-    inset:0; 
-    background:rgba(0,0,0,0.45); 
-    display:none; 
-    /* 這裡改用 flex，配合下方的 auto margin 實現完美置中 */
-    justify-content:center; 
-    align-items:center; 
-    z-index:999;
-    padding: 20px; /* 確保在小螢幕時，彈窗與邊緣有縫隙 */
-    overflow-y: auto; /* 若內容過長時允許滾動 */
+  .popup{
+    position:fixed; inset:0;
+    background:rgba(40,0,15,0.5);
+    -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+    display:none;
+    justify-content:center; align-items:center;
+    z-index:999; padding:20px; overflow-y:auto;
+    animation:overlayIn .3s ease;
   }
+  @keyframes overlayIn{ from{opacity:0} to{opacity:1} }
 
-  .popup-box{ 
-    width: 100%; /* 手機上撐開寬度 */
-    max-width:420px; 
-    background:white; 
-    color:#333; 
-    padding:36px; 
-    border-radius:28px; 
-    text-align:center;
-    margin: auto; /* 確保內容在容器中自動置中 */
-    box-sizing: border-box;
+  .popup-box{
+    position:relative; width:100%; max-width:400px;
+    background:linear-gradient(160deg,#ffffff 0%,#fff5f8 100%);
+    color:#6b5560; padding:44px 32px 34px; border-radius:30px;
+    text-align:center; margin:auto; box-sizing:border-box;
+    border:1px solid rgba(255,255,255,0.8);
+    box-shadow:0 30px 80px rgba(255,77,109,0.35), 0 8px 24px rgba(0,0,0,0.12);
+    animation:popIn .45s cubic-bezier(.18,.89,.32,1.28);
   }
-  .close-btn{ margin-top:24px; padding:12px 24px; border-radius:999px; background:#ff4d6d; color:white; cursor:pointer; display:inline-block; text-decoration:none; font-weight:700; transition:all .25s ease; }
-  .close-btn:hover{ transform:translateY(-2px); }
-  /* 彈窗內主要「進入平台」按鈕 + 次要「等等再看」按鈕 */
-  .enter-btn{ display:block; margin-top:24px; }
-  .close-btn-ghost{ background:transparent; color:#ff4d6d; border:1px solid rgba(255,77,109,0.4); margin-top:12px; }
+  @keyframes popIn{ from{opacity:0; transform:translateY(20px) scale(.92)} to{opacity:1; transform:translateY(0) scale(1)} }
+
+  /* 圓形漸層 icon 徽章 */
+  .popup-icon{
+    width:76px; height:76px; margin:0 auto 18px;
+    display:flex; align-items:center; justify-content:center; font-size:38px;
+    border-radius:50%; background:linear-gradient(135deg,#ff8fab,#ff4d6d);
+    box-shadow:0 10px 24px rgba(255,77,109,0.45);
+  }
+  .popup-box h2{ font-size:24px; color:#ff3d63; margin-bottom:14px; font-weight:800; }
+  .popup-box p{ font-size:16px; line-height:1.85; }
+  /* ID 凸顯小膠囊 */
+  .popup-id{ display:inline-block; margin:6px 0; padding:4px 16px; border-radius:999px;
+    background:#ffe3ec; color:#ff3d63; font-weight:800; letter-spacing:.5px; }
+
+  .popup-actions{ margin-top:26px; display:flex; flex-direction:column; gap:12px; }
+  .close-btn{
+    padding:14px 24px; border-radius:999px; cursor:pointer; display:block;
+    text-decoration:none; font-weight:800; border:none; transition:all .25s ease;
+    background:linear-gradient(135deg,#ff8fab,#ff4d6d); color:white;
+    box-shadow:0 8px 20px rgba(255,77,109,0.4);
+  }
+  .close-btn:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(255,77,109,0.5); }
+  /* 次要「等等再看」按鈕 */
+  .close-btn-ghost{
+    background:transparent; color:#ff4d6d;
+    border:1px solid rgba(255,77,109,0.35); box-shadow:none; font-weight:700;
+  }
+  .close-btn-ghost:hover{ background:rgba(255,77,109,0.06); box-shadow:none; }
 </style>
 </head>
 <body>
@@ -101,6 +131,7 @@
   <div class="counter">
     <div style="font-size:18px; margin-bottom:12px;">我們已經在一起</div>
     <div class="days" id="daysCounter">0<span>天</span></div>
+    <button class="toggle-btn" id="toggleBtn" onclick="toggleCounter()">看時分秒 ⏱</button>
   </div>
 
   <div style="margin-top:20px; font-size:18px; font-weight:bold; opacity:0.9;">From 碩🦆</div>
@@ -117,25 +148,53 @@
 </div>
 
 <script>
-  // 1. 計算天數
+  // 1. 計算在一起的時間 (可切換 天 / 天時分秒)
   const startDate = new Date(2022, 5, 3); // 月份從 0 算,5 = 6月;用本地時間避免時區差一天
-  const days = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
-  document.getElementById('daysCounter').innerHTML = days + '<span>天</span>';
+  const daysCounterEl = document.getElementById('daysCounter');
+  let detailMode = false;
 
-  // 2. 打字機效果 (速度放慢至 100ms)
+  function renderCounter(){
+    const diff = new Date() - startDate;
+    if(!detailMode){
+      const d = Math.floor(diff / 86400000);
+      daysCounterEl.innerHTML = d + '<span>天</span>';
+      return;
+    }
+    let rem = diff;
+    const d = Math.floor(rem / 86400000); rem -= d * 86400000;
+    const h = Math.floor(rem / 3600000);  rem -= h * 3600000;
+    const m = Math.floor(rem / 60000);    rem -= m * 60000;
+    const s = Math.floor(rem / 1000);
+    daysCounterEl.innerHTML =
+      `${d}<span>天</span> ${h}<span>時</span> ${m}<span>分</span> ${s}<span>秒</span>`;
+  }
+
+  function toggleCounter(){
+    detailMode = !detailMode;
+    daysCounterEl.classList.toggle('detail', detailMode);
+    document.getElementById('toggleBtn').textContent = detailMode ? '只看天數 📅' : '看時分秒 ⏱';
+    renderCounter();
+  }
+
+  renderCounter();
+  setInterval(renderCounter, 1000); // 詳細模式時每秒跳動
+
+  // 2. 打字機效果 (速度用setTimeout控制)
   const text = "從 2022 年 6 月 3 日開始，\n妳就變成了我每天都待在一起的人，謝謝妳一直陪在平凡的我的身邊。\n\n我們有開心、難過、快樂、吵架、還有你不懂的小幽默，都讓這段日子變得不一樣。寶貝，520 快樂💜";
   let index = 0;
   function typeText(){
     if(index < text.length){
       document.getElementById("typingText").innerHTML += (text.charAt(index) === '\n' ? "<br>" : text.charAt(index));
       index++;
-      setTimeout(typeText, 100);
+      setTimeout(typeText, 75);
     }
   }
   typeText();
 
   // 3. 點擊愛心特效
   document.body.addEventListener('click', function(e) {
+    // 彈窗開啟時不噴愛心,避免干擾
+    if(document.getElementById('popup').style.display === 'flex') return;
     const heart = document.createElement('div');
     heart.className = 'click-heart';
     heart.innerHTML = '💜';
@@ -147,23 +206,42 @@
 
   // 4. 彈窗
   function showLove(){
-    const content = `<h2>抱抱券已啟用 💕</h2><p>現在立刻給你一個大大的擁抱！<br>永遠愛妳！</p><div class="close-btn" onclick="closePopup()">收到了！</div>`;
-    document.getElementById('popupContent').innerHTML = content;
-    document.getElementById('popup').style.display = 'flex';
+    const content = `<div class="popup-icon">🫂</div>`
+      + `<h2>抱抱券已啟用</h2>`
+      + `<p>現在立刻給妳一個大大的擁抱！<br>永遠愛妳 💜</p>`
+      + `<div class="popup-actions">`
+      +   `<div class="close-btn" onclick="closePopup()">收到了！💕</div>`
+      + `</div>`;
+    openModal(content);
   }
 
   function openPopup(){
-    const content = `<h2>寶貝任務派遣平台 ✨</h2>`
-      + `<p>這是碩🦆偷偷為妳開發的小天地 💜<br>`
-      + `裡面有專屬妳的任務與驚喜，<br>`
-      + `準備好就點下面進去看看吧！</p>`
-      + `<a href="https://tarven.cc/" target="_blank" rel="noopener" class="close-btn enter-btn">進入平台 🚀</a>`
-      + `<div class="close-btn close-btn-ghost" onclick="closePopup()">等等再看 💕</div>`;
+    const content = `<div class="popup-icon">🚀</div>`
+      + `<h2>寶貝任務派遣平台</h2>`
+      + `<p>碩🦆已經把測試版發佈上去囉 💜<br>`
+      +   `我的 ID 是 <span class="popup-id">burdiet</span><br>`
+      +   `準備好就點進去,記得加我好友！</p>`
+      + `<div class="popup-actions">`
+      +   `<a href="https://tarven.cc/" target="_blank" rel="noopener" class="close-btn">進入平台 🚀</a>`
+      +   `<div class="close-btn close-btn-ghost" onclick="closePopup()">等等再看 💕</div>`
+      + `</div>`;
+    openModal(content);
+  }
+
+  function openModal(content){
     document.getElementById('popupContent').innerHTML = content;
     document.getElementById('popup').style.display = 'flex';
   }
-
   function closePopup(){ document.getElementById('popup').style.display = 'none'; }
+
+  // 點背景(非卡片本身)關閉彈窗
+  document.getElementById('popup').addEventListener('click', function(e){
+    if(e.target === this) closePopup();
+  });
+  // 按 Esc 關閉
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closePopup();
+  });
 </script>
 </body>
 </html>
