@@ -4,6 +4,18 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>給寶貝林巧庭 💜</title>
+
+<!-- 分享預覽 (Open Graph) -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="給寶貝林巧庭 💜 HAPPY 520" />
+<meta property="og:description" content="從 2022/06/03 開始，謝謝妳一直陪在我身邊。520 快樂 💜 —— From 碩🦆" />
+<meta property="og:url" content="https://tarven.cc" />
+<meta property="og:image" content="https://tarven.cc/og-image.png" />
+<meta property="og:locale" content="zh_TW" />
+<meta name="description" content="給最重要的妳 林巧庭，520 快樂 💜 From 碩🦆" />
+<meta name="theme-color" content="#ff4d6d" />
+<!-- 用愛心 emoji 當網址列小圖示 -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>" />
 <style>
   *{ margin:0; padding:0; box-sizing:border-box; }
   body{
@@ -28,12 +40,12 @@
     text-align:center; color:white; z-index:1;
   }
 
-  .typing{ font-size:26px; line-height:1.9; min-height:140px; font-weight:600; }
+  .typing{ font-size:clamp(18px,5vw,26px); line-height:1.9; min-height:140px; font-weight:600; }
   .cursor{ display:inline-block; width:3px; height:28px; background:white; margin-left:6px; animation:blink .8s infinite; }
   @keyframes blink{ 50%{ opacity:0; } }
 
   .counter{ margin-top:34px; padding:28px; border-radius:26px; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.18); }
-  .days{ font-size:70px; font-weight:900; }
+  .days{ font-size:clamp(48px,14vw,70px); font-weight:900; }
 
   .btn{ display:inline-block; margin: 10px; padding:16px 30px; border-radius:999px; text-decoration:none; font-weight:800; transition:all .35s ease; cursor:pointer; border:none; }
   .btn-love{ background:white; color:#ff4d6d; }
@@ -68,7 +80,11 @@
     margin: auto; /* 確保內容在容器中自動置中 */
     box-sizing: border-box;
   }
-  .close-btn{ margin-top:24px; padding:12px 24px; border-radius:999px; background:#ff4d6d; color:white; cursor:pointer; display:inline-block; }
+  .close-btn{ margin-top:24px; padding:12px 24px; border-radius:999px; background:#ff4d6d; color:white; cursor:pointer; display:inline-block; text-decoration:none; font-weight:700; transition:all .25s ease; }
+  .close-btn:hover{ transform:translateY(-2px); }
+  /* 彈窗內主要「進入平台」按鈕 + 次要「等等再看」按鈕 */
+  .enter-btn{ display:block; margin-top:24px; }
+  .close-btn-ghost{ background:transparent; color:#ff4d6d; border:1px solid rgba(255,77,109,0.4); margin-top:12px; }
 </style>
 </head>
 <body>
@@ -78,7 +94,7 @@
 
 <div class="card">
   <div style="letter-spacing:4px; margin-bottom:18px;">HAPPY 520</div>
-  <h1 style="font-size:54px; margin-bottom:10px;">寶貝</h1>
+  <h1 style="font-size:clamp(40px,12vw,54px); margin-bottom:10px;">寶貝</h1>
   <div class="name" style="margin-bottom:30px;">給最重要的妳 林巧庭</div>
   <div class="typing"><span id="typingText"></span><span class="cursor"></span></div>
 
@@ -102,7 +118,7 @@
 
 <script>
   // 1. 計算天數
-  const startDate = new Date('2022-06-03');
+  const startDate = new Date(2022, 5, 3); // 月份從 0 算,5 = 6月;用本地時間避免時區差一天
   const days = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
   document.getElementById('daysCounter').innerHTML = days + '<span>天</span>';
 
@@ -137,7 +153,12 @@
   }
 
   function openPopup(){
-    const content = `<h2>即將上線 ✨</h2><p>碩的秘密程式開發進度<br>寶貝任務派遣平台正在努力開發中 💜<br><br>敬請期待測試版本上線！</p><div class="close-btn" onclick="closePopup()">我知道了 💕</div>`;
+    const content = `<h2>寶貝任務派遣平台 ✨</h2>`
+      + `<p>這是碩🦆偷偷為妳開發的小天地 💜<br>`
+      + `裡面有專屬妳的任務與驚喜，<br>`
+      + `準備好就點下面進去看看吧！</p>`
+      + `<a href="https://tarven.cc/" target="_blank" rel="noopener" class="close-btn enter-btn">進入平台 🚀</a>`
+      + `<div class="close-btn close-btn-ghost" onclick="closePopup()">等等再看 💕</div>`;
     document.getElementById('popupContent').innerHTML = content;
     document.getElementById('popup').style.display = 'flex';
   }
