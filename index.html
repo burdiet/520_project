@@ -311,7 +311,7 @@
       + `<h2>寶貝任務派遣平台</h2>`
       + `<p>碩🦆已經把測試版發佈上去囉 💜<br>`
       +   `我的 ID 是 <span class="popup-id" onclick="copyId('burdiet')" title="點擊複製 ID">burdiet 📋</span><br>`
-      +   `準備好就點進去,記得加我好友！</p>`
+      +   `準備好就點進去，記得加我好友！</p>`
       + `<div class="popup-actions">`
       +   `<a href="https://tarven.cc/" target="_blank" rel="noopener" class="close-btn">進入平台 🚀</a>`
       +   `<div class="close-btn close-btn-ghost" onclick="closePopup()">等等再看 💕</div>`
@@ -338,7 +338,7 @@
   function copyId(text) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text)
-        .then(() => showToast("已複製 ID: " + text + " 💕"))
+        .then(() => showToast("已複製 ID: " + text))
         .catch(() => fallbackCopy(text));
     } else {
       fallbackCopy(text);
@@ -353,7 +353,7 @@
     textarea.select();
     try {
       document.execCommand("copy");
-      showToast("已複製 ID: " + text + " 💕");
+      showToast("已複製 ID: " + text);
     } catch (e) {
       showToast("複製失敗，請手動複製 😢");
     }
