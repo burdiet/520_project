@@ -118,7 +118,33 @@
   .popup-box p{ font-size:16px; line-height:1.85; }
   /* ID 凸顯小膠囊 */
   .popup-id{ display:inline-block; margin:6px 0; padding:4px 16px; border-radius:999px;
-    background:#ffe3ec; color:#ff3d63; font-weight:800; letter-spacing:.5px; }
+    background:#ffe3ec; color:#ff3d63; font-weight:800; letter-spacing:.5px; cursor:pointer; transition:all 0.2s ease; }
+  .popup-id:hover{ background:#ffcbd8; transform:scale(1.05); }
+  .popup-id:active{ transform:scale(0.95); }
+
+  /* Toast 提示 */
+  .toast {
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%) translateY(30px);
+    background: rgba(255, 77, 109, 0.95);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 800;
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 25px rgba(255, 77, 109, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
 
   .popup-actions{ margin-top:26px; display:flex; flex-direction:column; gap:12px; }
   .close-btn{
@@ -207,6 +233,8 @@
   <div class="popup-box" id="popupContent"></div>
 </div>
 
+<div id="toast" class="toast"></div>
+
 <script>
   // 1. 計算在一起的時間 (可切換 天 / 天時分秒)
   const startDate = new Date(2022, 5, 3); // 月份從 0 算,5 = 6月;用本地時間避免時區差一天
@@ -282,7 +310,7 @@
     const content = `<div class="popup-icon">🚀</div>`
       + `<h2>寶貝任務派遣平台</h2>`
       + `<p>碩🦆已經把測試版發佈上去囉 💜<br>`
-      +   `我的 ID 是 <span class="popup-id">burdiet</span><br>`
+      +   `我的 ID 是 <span class="popup-id" onclick="copyId('burdiet')" title="點擊複製 ID">burdiet 📋</span><br>`
       +   `準備好就點進去,記得加我好友！</p>`
       + `<div class="popup-actions">`
       +   `<a href="https://tarven.cc/" target="_blank" rel="noopener" class="close-btn">進入平台 🚀</a>`
@@ -305,6 +333,41 @@
   document.addEventListener('keydown', function(e){
     if(e.key === 'Escape') closePopup();
   });
+
+  // 複製 ID 與 Toast 提示
+  function copyId(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(() => showToast("已複製 ID: " + text + " 💕"))
+        .catch(() => fallbackCopy(text));
+    } else {
+      fallbackCopy(text);
+    }
+  }
+
+  function fallbackCopy(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed"; // prevent scroll
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand("copy");
+      showToast("已複製 ID: " + text + " 💕");
+    } catch (e) {
+      showToast("複製失敗，請手動複製 😢");
+    }
+    document.body.removeChild(textarea);
+  }
+
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast show';
+    setTimeout(() => {
+      toast.className = 'toast';
+    }, 2000);
+  }
 </script>
 </body>
 </html>
