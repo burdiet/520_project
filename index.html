@@ -27,6 +27,9 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>" />
 <style>
   *{ margin:0; padding:0; box-sizing:border-box; }
+  html, body{
+    overflow-x: hidden;
+  }
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     min-height:100vh;
@@ -37,6 +40,7 @@
   }
   
   /* 背景光暈與動畫 */
+  .bg-glow-container{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
   .bg-glow{ position:absolute; width:700px; height:700px; border-radius:50%; background:rgba(255,255,255,0.15); filter:blur(80px); animation:moveGlow 12s ease-in-out infinite alternate; z-index:0; }
   .bg-glow2{ position:absolute; width:500px; height:500px; border-radius:50%; background:rgba(255,255,255,0.12); filter:blur(90px); right:-120px; bottom:-120px; animation:moveGlow2 10s ease-in-out infinite alternate; z-index:0; }
   @keyframes moveGlow{ from{ transform:translate(-80px,-60px); } to{ transform:translate(100px,80px); } }
@@ -56,8 +60,10 @@
   .counter{ margin-top:34px; padding:28px; border-radius:26px; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.18); }
   .days{ font-size:clamp(48px,14vw,70px); font-weight:900; }
   /* 詳細模式:天時分秒,字級縮小並換成單位小字 */
-  .days.detail{ font-size:clamp(26px,8vw,40px); display:flex; justify-content:center; align-items:baseline; gap:8px; flex-wrap:wrap; }
-  .days.detail span{ font-size:0.42em; font-weight:700; opacity:0.85; margin-left:2px; }
+  .days.detail{ font-size:clamp(26px,8vw,40px); display:flex; justify-content:center; align-items:baseline; gap:6px 12px; flex-wrap:wrap; }
+  .days .unit{ font-size:0.42em; font-weight:700; opacity:0.85; margin-left:2px; }
+  .time-block{ display:inline-block; white-space:nowrap; }
+
   /* 切換鈕 */
   .toggle-btn{
     margin-top:16px; padding:7px 16px; border-radius:999px; cursor:pointer;
@@ -72,7 +78,7 @@
   .btn:hover{ transform:translateY(-4px) scale(1.05); }
 
   /* 點擊特效動畫 */
-  .click-heart { position: absolute; pointer-events: none; font-size: 20px; animation: floatOut 1s forwards; }
+  .click-heart { position: fixed; pointer-events: none; font-size: 20px; animation: floatOut 1s forwards; z-index: 9999; }
   @keyframes floatOut { to { transform: translateY(-80px) scale(1.5); opacity: 0; } }
 
   .popup{
@@ -113,7 +119,7 @@
   .popup-actions{ margin-top:26px; display:flex; flex-direction:column; gap:12px; }
   .close-btn{
     padding:14px 24px; border-radius:999px; cursor:pointer; display:block;
-    text-decoration:none; font-weight:800; border:none; transition:all .25s ease;
+    text-align:center; text-decoration:none; font-weight:800; border:none; transition:all .25s ease;
     background:linear-gradient(135deg,#ff8fab,#ff4d6d); color:white;
     box-shadow:0 8px 20px rgba(255,77,109,0.4);
   }
@@ -124,12 +130,50 @@
     border:1px solid rgba(255,77,109,0.35); box-shadow:none; font-weight:700;
   }
   .close-btn-ghost:hover{ background:rgba(255,77,109,0.06); box-shadow:none; }
+
+  @media (max-width: 600px) {
+    body {
+      padding: 12px;
+    }
+    .card {
+      padding: 32px 20px;
+      border-radius: 24px;
+    }
+    .typing {
+      min-height: 180px;
+    }
+    .counter {
+      padding: 20px 14px;
+      margin-top: 24px;
+      border-radius: 20px;
+    }
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+      margin-top: 24px !important;
+    }
+    .btn {
+      margin: 0;
+      padding: 14px 20px;
+      font-size: 15px;
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .click-heart {
+      font-size: 16px;
+    }
+  }
 </style>
 </head>
 <body>
 
-<div class="bg-glow"></div>
-<div class="bg-glow2"></div>
+<div class="bg-glow-container">
+  <div class="bg-glow"></div>
+  <div class="bg-glow2"></div>
+</div>
 
 <div class="card">
   <div style="letter-spacing:4px; margin-bottom:18px;">HAPPY 520</div>
@@ -139,7 +183,7 @@
 
   <div class="counter">
     <div style="font-size:18px; margin-bottom:12px;">我們已經在一起</div>
-    <div class="days" id="daysCounter">0<span>天</span></div>
+    <div class="days" id="daysCounter">0<span class="unit">天</span></div>
     <button class="toggle-btn" id="toggleBtn" onclick="toggleCounter()">看時分秒 ⏱</button>
   </div>
 
@@ -166,7 +210,7 @@
     const diff = new Date() - startDate;
     if(!detailMode){
       const d = Math.floor(diff / 86400000);
-      daysCounterEl.innerHTML = d + '<span>天</span>';
+      daysCounterEl.innerHTML = d + '<span class="unit">天</span>';
       return;
     }
     let rem = diff;
@@ -175,7 +219,10 @@
     const m = Math.floor(rem / 60000);    rem -= m * 60000;
     const s = Math.floor(rem / 1000);
     daysCounterEl.innerHTML =
-      `${d}<span>天</span> ${h}<span>時</span> ${m}<span>分</span> ${s}<span>秒</span>`;
+      `<span class="time-block">${d}<span class="unit">天</span></span>` +
+      `<span class="time-block">${h}<span class="unit">時</span></span>` +
+      `<span class="time-block">${m}<span class="unit">分</span></span>` +
+      `<span class="time-block">${s}<span class="unit">秒</span></span>`;
   }
 
   function toggleCounter(){
